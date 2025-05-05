@@ -1,0 +1,1785 @@
+{% extends "base.html" %}
+
+{% block title %}EuroFormula API - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Admin Dashboard</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="drivers">Drivers</button>
+        <button class="tab-btn" data-tab="teams">Teams</button>
+        <button class="tab-btn" data-tab="races">Races</button>
+        <button class="tab-btn" data-tab="results">Results</button>
+    </div>
+
+    <div class="tab-content">
+        <!-- Drivers Tab -->
+        <div id="drivers" class="tab-pane active">
+            <div class="data-management">
+                <div class="data-list">
+                    <h2>Drivers</h2>
+                    <button class="btn btn-primary" onclick="showAddForm('driver')">Add Driver</button>
+                    <div id="drivers-list"></div>
+                </div>
+                <div class="data-form" id="driver-form" style="display: none;">
+                    <h2>Add/Edit Driver</h2>
+                    <form id="driver-form-content">
+                        <input type="hidden" id="driver-id">
+                        <div class="form-group">
+                            <label for="driverNumber">Driver Number</label>
+                            <input type="number" id="driverNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nationality">Nationality</label>
+                            <input type="text" id="nationality" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="points">Points</label>
+                            <input type="number" id="points" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" required>
+                                <option value="None">None</option>
+                                <option value="Rookie Championship">Rookie Championship</option>
+                                <option value="Gentleman Class">Gentleman Class</option>
+                                <option value="Guest Class">Guest Class</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="teamName">Team</label>
+                            <select id="teamName" required>
+                                <option value="">Select a team</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideForm('driver')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teams Tab -->
+        <div id="teams" class="tab-pane">
+            <div class="data-management">
+                <div class="data-list">
+                    <h2>Teams</h2>
+                    <button class="btn btn-primary" onclick="showAddForm('team')">Add Team</button>
+                    <div id="teams-list"></div>
+                </div>
+                <div class="data-form" id="team-form" style="display: none;">
+                    <h2>Add/Edit Team</h2>
+                    <form id="team-form-content">
+                        <input type="hidden" id="team-id">
+                        <div class="form-group">
+                            <label for="teamIdInput">Team ID</label>
+                            <input type="text" id="teamIdInput" name="teamId" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="teamNameInput">Team Name</label>
+                            <input type="text" id="teamNameInput" name="teamName" required autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="teamCountry">Country</label>
+                            <input type="text" id="teamCountry" name="teamCountry" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teamPoints">Points</label>
+                            <input type="number" id="teamPoints" name="teamPoints" value="0" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideForm('team')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Races Tab -->
+        <div id="races" class="tab-pane">
+            <div class="data-management">
+                <div class="data-list">
+                    <h2>Races</h2>
+                    <button class="btn btn-primary" onclick="showAddForm('race')">Add Race</button>
+                    <div id="races-list"></div>
+                </div>
+                <div class="data-form" id="race-form" style="display: none;">
+                    <h2>Add/Edit Race</h2>
+                    <form id="race-form-content">
+                        <input type="hidden" id="race-id">
+                        <div class="form-group">
+                            <label for="race-round">Round</label>
+                            <input type="number" id="race-round" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="circuit">Circuit</label>
+                            <input type="text" id="circuit" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" required>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 1</h3>
+                            <div class="form-group">
+                                <label for="race1-date">Date</label>
+                                <input type="date" id="race1-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="race1-time">Time (UTC)</label>
+                                <input type="time" id="race1-time">
+                            </div>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 2</h3>
+                            <div class="form-group">
+                                <label for="race2-date">Date</label>
+                                <input type="date" id="race2-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="race2-time">Time (UTC)</label>
+                                <input type="time" id="race2-time">
+                            </div>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 3</h3>
+                            <div class="form-group">
+                                <label for="race3-date">Date</label>
+                                <input type="date" id="race3-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="race3-time">Time (UTC)</label>
+                                <input type="time" id="race3-time">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideForm('race')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Tab -->
+        <div id="results" class="tab-pane">
+            <div class="data-management">
+                <div class="data-list">
+                    <h2>Results</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showAddForm('result')">Add Result</button>
+                        <button class="btn btn-secondary" onclick="updatePoints()">Update Points</button>
+                    </div>
+                    <div id="results-list"></div>
+                </div>
+                <div class="data-form" id="result-form" style="display: none;">
+                    <h2>Add/Edit Result</h2>
+                    <form id="result-form-content">
+                        <input type="hidden" id="result-id">
+                        <div class="form-group">
+                            <label for="result-round">Round</label>
+                            <select id="result-round" required>
+                                <option value="">Select a round</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="race1-pole">Pole Position</label>
+                            <select id="race1-pole" class="driver-select">
+                                <option value="">Select pole position</option>
+                            </select>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 1</h3>
+                            <div class="results-grid">
+                                <div class="grid-header">
+                                    <span>Driver</span>
+                                    <span>Position</span>
+                                    <span>Fastest Lap</span>
+                                </div>
+                                <div id="race1-results" class="results-container"></div>
+                            </div>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 2</h3>
+                            <div class="results-grid">
+                                <div class="grid-header">
+                                    <span>Driver</span>
+                                    <span>Position</span>
+                                    <span>Fastest Lap</span>
+                                </div>
+                                <div id="race2-results" class="results-container"></div>
+                            </div>
+                        </div>
+                        <div class="race-slot">
+                            <h3>Race 3</h3>
+                            <div class="results-grid">
+                                <div class="grid-header">
+                                    <span>Driver</span>
+                                    <span>Position</span>
+                                    <span>Fastest Lap</span>
+                                </div>
+                                <div id="race3-results" class="results-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideForm('result')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        background: #e2e8f0;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .tab-pane {
+        display: none;
+    }
+
+    .tab-pane.active {
+        display: block;
+    }
+
+    .data-management {
+        display: flex;
+        gap: 2rem;
+        position: relative;
+    }
+
+    .data-list {
+        flex: 2;
+        overflow-x: auto;
+    }
+
+    .data-form {
+        flex: 1;
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 100;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    th,
+    td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+        background: #f8fafc;
+        font-weight: 500;
+    }
+
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        margin: 0 0.25rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+    }
+
+    .edit-btn {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .delete-btn {
+        background: #ef4444;
+        color: white;
+    }
+
+    .race-slot {
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .race-slot h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: #334155;
+    }
+
+    .race-results {
+        font-size: 0.9rem;
+        min-width: 300px;
+    }
+
+    .pole-position {
+        font-weight: bold;
+        color: #3b82f6;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-row {
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        align-items: center;
+    }
+
+    .driver-number {
+        font-weight: 500;
+        color: #3b82f6;
+    }
+
+    .driver-name {
+        font-weight: 500;
+    }
+
+    .driver-team {
+        color: #6b7280;
+        font-size: 0.9em;
+    }
+
+    .position {
+        text-align: right;
+    }
+
+    .position em {
+        color: #f59e0b;
+        font-style: italic;
+    }
+
+    .retired {
+        color: #ef4444;
+    }
+
+    .dns {
+        color: #6b7280;
+    }
+
+    .pole-cell {
+        text-align: left;
+        font-weight: bold;
+        color: #3b82f6;
+        min-width: 200px;
+    }
+
+    .results-table {
+        width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+        min-width: 1200px;
+    }
+
+    .results-table th {
+        padding: 0.75rem;
+        text-align: left;
+        background: #f8fafc;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .results-table td {
+        padding: 0.75rem;
+        vertical-align: top;
+    }
+
+    .race-results {
+        font-size: 0.9rem;
+    }
+
+    .result-row {
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        align-items: center;
+    }
+
+    .driver-number {
+        font-weight: 500;
+        color: #3b82f6;
+    }
+
+    .driver-name {
+        font-weight: 500;
+    }
+
+    .position {
+        text-align: right;
+    }
+
+    .position em {
+        color: #f59e0b;
+        font-style: italic;
+    }
+
+    .pole-cell {
+        text-align: left;
+        font-weight: bold;
+        color: #3b82f6;
+        min-width: 200px;
+    }
+
+    .retired {
+        color: #ef4444;
+    }
+
+    .dns {
+        color: #6b7280;
+    }
+
+    .results-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .grid-header {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        padding: 0.5rem;
+        background-color: #f8fafc;
+        border-radius: 0.25rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    .result-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        background-color: white;
+        align-items: center;
+    }
+
+    .result-row:hover {
+        background-color: #f8fafc;
+    }
+
+    .result-row .driver-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .result-row .driver-number {
+        font-weight: 500;
+        color: #3b82f6;
+        font-size: 0.9rem;
+    }
+
+    .result-row .driver-name {
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+
+    .result-row input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .result-row input[type="radio"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 auto;
+    }
+
+    .results-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .race-slot {
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .race-slot h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: #334155;
+    }
+
+    /* Add styles for the driver selection */
+    .driver-select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #334155;
+    }
+
+    .results-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .grid-header {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        padding: 0.5rem;
+        background-color: #f8fafc;
+        border-radius: 0.25rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    .result-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        background-color: white;
+        align-items: center;
+    }
+
+    .result-row:hover {
+        background-color: #f8fafc;
+    }
+
+    .result-row .driver-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .result-row .driver-number {
+        font-weight: 500;
+        color: #3b82f6;
+        font-size: 0.9rem;
+    }
+
+    .result-row .driver-name {
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+
+    .result-row input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .result-row input[type="radio"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 auto;
+    }
+
+    .results-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .race-slot {
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .race-slot h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: #334155;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>
+    // Tab switching functionality
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and panes
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding pane
+            button.classList.add('active');
+            document.getElementById(button.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Load initial data
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDrivers();
+        loadTeams();
+        loadRaces();
+        loadResults();
+        loadTeamsForDropdown();
+    });
+
+    // Form handling functions
+    async function showAddForm(type) {
+        const form = document.getElementById(`${type}-form`);
+        const formContent = document.getElementById(`${type}-form-content`);
+
+        // Force form to be visible
+        form.style.display = 'block';
+        form.style.visibility = 'visible';
+        form.style.opacity = '1';
+        form.style.position = 'absolute';
+        form.style.right = '0';
+        form.style.top = '0';
+        form.style.width = '400px';
+        form.style.maxHeight = '90vh';
+        form.style.overflowY = 'auto';
+        form.style.zIndex = '100';
+        form.style.backgroundColor = '#f8fafc';
+        form.style.padding = '1.5rem';
+        form.style.borderRadius = '0.5rem';
+
+        document.getElementById(`${type}-id`).value = '';
+        formContent.reset();
+
+        if (type === 'team') {
+            // Generate and set the next team ID
+            const nextId = await getNextTeamId();
+            document.getElementById('teamIdInput').value = nextId;
+        }
+
+        if (type === 'driver') {
+            loadTeamsForDropdown();
+        }
+
+        if (type === 'result') {
+            await loadAvailableRounds();
+            const drivers = await loadDriversForDropdown();
+
+            // Populate pole position dropdowns
+            const poleSelects = document.querySelectorAll('.driver-select');
+            poleSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select pole position</option>';
+                drivers.forEach(driver => {
+                    const option = document.createElement('option');
+                    option.value = driver.driverNumber;
+                    option.textContent = `#${driver.driverNumber} ${driver.firstName} ${driver.lastName}`;
+                    select.appendChild(option);
+                });
+            });
+
+            // Populate results for all races
+            await populateRaceResults('race1');
+            await populateRaceResults('race2');
+            await populateRaceResults('race3');
+        }
+    }
+
+    function hideForm(type) {
+        document.getElementById(`${type}-form`).style.display = 'none';
+        document.getElementById(`${type}-form-content`).reset();
+    }
+
+    // Driver functions
+    async function loadDrivers() {
+        try {
+            const response = await fetch('/api/drivers');
+            const drivers = await response.json();
+            const table = createTable(drivers, 'driver');
+            document.getElementById('drivers-list').innerHTML = table;
+        } catch (error) {
+            console.error('Error loading drivers:', error);
+        }
+    }
+
+    async function createDriver(data) {
+        try {
+            const response = await fetch('/api/drivers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                loadDrivers();
+                hideForm('driver');
+            }
+        } catch (error) {
+            console.error('Error creating driver:', error);
+        }
+    }
+
+    async function updateDriver(id, data) {
+        try {
+            // If driver number has changed, we need to create a new document and delete the old one
+            if (data.driverNumber !== id) {
+                // First create the new document
+                const createResponse = await fetch('/api/drivers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!createResponse.ok) {
+                    throw new Error('Failed to create new driver document');
+                }
+
+                // Then delete the old document
+                const deleteResponse = await fetch(`/api/drivers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!deleteResponse.ok) {
+                    throw new Error('Failed to delete old driver document');
+                }
+            } else {
+                // If driver number hasn't changed, just update the existing document
+                const response = await fetch(`/api/drivers/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update driver');
+                }
+            }
+
+            loadDrivers();
+            hideForm('driver');
+        } catch (error) {
+            console.error('Error updating driver:', error);
+            alert('Failed to update driver. Please try again.');
+        }
+    }
+
+    async function deleteDriver(id) {
+        if (confirm('Are you sure you want to delete this driver?')) {
+            try {
+                const response = await fetch(`/api/drivers/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadDrivers();
+                }
+            } catch (error) {
+                console.error('Error deleting driver:', error);
+            }
+        }
+    }
+
+    // Team functions
+    async function loadTeams() {
+        try {
+            const response = await fetch('/api/teams');
+            const teams = await response.json();
+            const table = createTable(teams, 'team');
+            document.getElementById('teams-list').innerHTML = table;
+        } catch (error) {
+            console.error('Error loading teams:', error);
+        }
+    }
+
+    async function createTeam(data) {
+        try {
+            const response = await fetch('/api/teams', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to create team');
+            }
+            loadTeams();
+            hideForm('team');
+        } catch (error) {
+            console.error('Error creating team:', error);
+            alert('Failed to create team: ' + error.message);
+        }
+    }
+
+    async function updateTeam(id, data) {
+        try {
+            const response = await fetch(`/api/teams/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update team');
+            }
+            loadTeams();
+            hideForm('team');
+        } catch (error) {
+            alert('Failed to update team: ' + error.message);
+        }
+    }
+
+    async function deleteTeam(id) {
+        if (confirm('Are you sure you want to delete this team?')) {
+            try {
+                const response = await fetch(`/api/teams/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadTeams();
+                }
+            } catch (error) {
+                console.error('Error deleting team:', error);
+            }
+        }
+    }
+
+    // Race functions
+    async function loadRaces() {
+        try {
+            const response = await fetch('/api/races');
+            const races = await response.json();
+            const table = createTable(races, 'race');
+            document.getElementById('races-list').innerHTML = table;
+        } catch (error) {
+            console.error('Error loading races:', error);
+        }
+    }
+
+    async function createRace(data) {
+        try {
+            const response = await fetch('/api/races', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                loadRaces();
+                hideForm('race');
+            }
+        } catch (error) {
+            console.error('Error creating race:', error);
+        }
+    }
+
+    async function updateRace(id, data) {
+        try {
+            const response = await fetch(`/api/races/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                loadRaces();
+                hideForm('race');
+            }
+        } catch (error) {
+            console.error('Error updating race:', error);
+        }
+    }
+
+    async function deleteRace(id) {
+        if (confirm('Are you sure you want to delete this race?')) {
+            try {
+                const response = await fetch(`/api/races/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadRaces();
+                }
+            } catch (error) {
+                console.error('Error deleting race:', error);
+            }
+        }
+    }
+
+    // Result functions
+    async function loadResults() {
+        try {
+            // Fetch both results and drivers
+            const [resultsResponse, driversResponse] = await Promise.all([
+                fetch('/api/results'),
+                fetch('/api/drivers')
+            ]);
+
+            const results = await resultsResponse.json();
+            const drivers = await driversResponse.json();
+
+            // Create a map of driver numbers to names
+            const driverMap = {};
+            drivers.forEach(driver => {
+                driverMap[driver.driverNumber] = `${driver.firstName} ${driver.lastName}`;
+            });
+
+            const table = createTable(results, 'result', driverMap);
+            document.getElementById('results-list').innerHTML = table;
+        } catch (error) {
+            console.error('Error loading results:', error);
+        }
+    }
+
+    async function createResult(data) {
+        try {
+            const response = await fetch('/api/results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                loadResults();
+                hideForm('result');
+            }
+        } catch (error) {
+            console.error('Error creating result:', error);
+        }
+    }
+
+    async function updateResult(id, data) {
+        try {
+            const response = await fetch(`/api/results/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                loadResults();
+                hideForm('result');
+            }
+        } catch (error) {
+            console.error('Error updating result:', error);
+        }
+    }
+
+    async function deleteResult(id) {
+        if (confirm('Are you sure you want to delete this result?')) {
+            try {
+                const response = await fetch(`/api/results/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadResults();
+                }
+            } catch (error) {
+                console.error('Error deleting result:', error);
+            }
+        }
+    }
+
+    // Helper function to create tables
+    function createTable(data, type, driverMap = {}) {
+        if (!data || data.length === 0) {
+            return '<p>No data available</p>';
+        }
+
+        // Special handling for results
+        if (type === 'result') {
+            let table = '<table class="results-table"><thead><tr>';
+            table += '<th>Circuit</th>';
+            table += '<th>Round</th>';
+            table += '<th>Pole Position</th>';
+            table += '<th>Race 1 Results</th>';
+            table += '<th>Race 2 Results</th>';
+            table += '<th>Race 3 Results</th>';
+            table += '<th>Actions</th>';
+            table += '</tr></thead><tbody>';
+
+            data.forEach(item => {
+                table += '<tr>';
+                table += `<td>${item.circuit}</td>`;
+                table += `<td>${item.round}</td>`;
+
+                // Get pole position from the first race
+                const polePosition = item.races?.[0]?.pole_position;
+                const poleDriver = polePosition ? driverMap[polePosition] : null;
+                table += `<td class="pole-cell">${polePosition ? `#${polePosition} ${poleDriver || ''}` : '-'}</td>`;
+
+                // Handle races array
+                const races = item.races || [];
+                for (let i = 0; i < 3; i++) {
+                    const race = races[i] || {};
+                    const results = race.results || [];
+
+                    // Sort results by position
+                    results.sort((a, b) => {
+                        // Handle special positions like "Ret" and "DNS"
+                        if (a.position === "Ret" || a.position === "DNS") return 1;
+                        if (b.position === "Ret" || b.position === "DNS") return -1;
+                        return parseInt(a.position) - parseInt(b.position);
+                    });
+
+                    // Results column
+                    let raceResults = '<div class="race-results">';
+                    results.forEach(result => {
+                        const driverName = driverMap[result.driverNumber] || 'Unknown';
+                        const positionClass = result.position === "Ret" ? "retired" :
+                            result.position === "DNS" ? "dns" : "";
+                        const position = result.fastest_lap ?
+                            `<em>${result.position}</em>` :
+                            result.position;
+                        raceResults += `<div class="result-row ${positionClass}">
+                            <span class="driver-number">#${result.driverNumber}</span>
+                            <span class="driver-name">${driverName}</span>
+                            <span class="position">${position}</span>
+                        </div>`;
+                    });
+                    raceResults += '</div>';
+                    table += `<td>${raceResults}</td>`;
+                }
+
+                table += `<td>
+                    <button class="action-btn edit-btn" onclick="editItem('${type}', '${item.round}')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item.round}')">Delete</button>
+                </td></tr>`;
+            });
+
+            table += '</tbody></table>';
+            return table;
+        }
+
+        // Special handling for drivers
+        if (type === 'driver') {
+            let table = '<table><thead><tr>';
+            table += '<th>Driver Number</th>';
+            table += '<th>Name</th>';
+            table += '<th>Nationality</th>';
+            table += '<th>Team</th>';
+            table += '<th>Points</th>';
+            table += '<th>Status</th>';
+            table += '<th>Actions</th>';
+            table += '</tr></thead><tbody>';
+
+            data.forEach(item => {
+                table += '<tr>';
+                table += `<td>${item.driverNumber}</td>`;
+                table += `<td>${item.firstName} ${item.lastName}</td>`;
+                table += `<td>${item.nationality}</td>`;
+                table += `<td>${item.teamName}</td>`;
+                table += `<td>${item.points || 0}</td>`;
+                table += `<td>${item.status || 'None'}</td>`;
+                table += `<td>
+                    <button class="action-btn edit-btn" onclick="editItem('${type}', '${item.driverNumber}')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item.driverNumber}')">Delete</button>
+                </td></tr>`;
+            });
+
+            table += '</tbody></table>';
+            return table;
+        }
+
+        // Special handling for races
+        if (type === 'race') {
+            let table = '<table><thead><tr>';
+            table += '<th>Round</th>';
+            table += '<th>Circuit</th>';
+            table += '<th>City</th>';
+            table += '<th>Country</th>';
+            table += '<th>Race 1</th>';
+            table += '<th>Race 2</th>';
+            table += '<th>Race 3</th>';
+            table += '<th>Actions</th>';
+            table += '</tr></thead><tbody>';
+
+            data.forEach(item => {
+                table += '<tr>';
+                table += `<td>${item.round}</td>`;
+                table += `<td>${item.circuit}</td>`;
+                table += `<td>${item.city}</td>`;
+                table += `<td>${item.country}</td>`;
+
+                // Format race information
+                const races = item.races || [];
+                for (let i = 0; i < 3; i++) {
+                    const race = races[i] || {};
+                    const date = race.date ? new Date(race.date).toLocaleDateString() : '-';
+                    const time = race.time || '-';
+                    table += `<td>${date}<br>${time}</td>`;
+                }
+
+                table += `<td>
+                    <button class="action-btn edit-btn" onclick="editItem('${type}', '${item.round}')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item.round}')">Delete</button>
+                </td></tr>`;
+            });
+
+            table += '</tbody></table>';
+            return table;
+        }
+
+        // Special handling for teams
+        if (type === 'team') {
+            // Sort teams by points in descending order
+            data.sort((a, b) => (b.teamPoints || 0) - (a.teamPoints || 0));
+
+            let table = '<table><thead><tr>';
+            table += '<th>Team ID</th>';
+            table += '<th>Team Name</th>';
+            table += '<th>Country</th>';
+            table += '<th>Points</th>';
+            table += '<th>Actions</th>';
+            table += '</tr></thead><tbody>';
+
+            data.forEach(item => {
+                table += '<tr>';
+                table += `<td>${item.teamId}</td>`;
+                table += `<td>${item.teamName}</td>`;
+                table += `<td>${item.teamCountry}</td>`;
+                table += `<td>${item.teamPoints || 0}</td>`;
+                table += `<td>
+                    <button class="action-btn edit-btn" onclick="editItem('${type}', '${item.teamId}')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item.teamId}')">Delete</button>
+                </td></tr>`;
+            });
+
+            table += '</tbody></table>';
+            return table;
+        }
+
+        // Default table creation for other types
+        const headers = Object.keys(data[0]);
+        let table = '<table><thead><tr>';
+        headers.forEach(header => {
+            table += `<th>${header}</th>`;
+        });
+        table += '<th>Actions</th></tr></thead><tbody>';
+
+        data.forEach(item => {
+            table += '<tr>';
+            headers.forEach(header => {
+                let value = item[header];
+                if (typeof value === 'object' && value !== null) {
+                    value = JSON.stringify(value);
+                }
+                table += `<td>${value}</td>`;
+            });
+            table += `<td>
+                <button class="action-btn edit-btn" onclick="editItem('${type}', '${item[type === 'driver' ? 'driverNumber' : type === 'team' ? 'teamId' : 'round']}')">Edit</button>
+                <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item[type === 'driver' ? 'driverNumber' : type === 'team' ? 'teamId' : 'round']}')">Delete</button>
+            </td></tr>`;
+        });
+
+        table += '</tbody></table>';
+        return table;
+    }
+
+    // Load teams for dropdown
+    async function loadTeamsForDropdown() {
+        try {
+            const response = await fetch('/api/teams');
+            const teams = await response.json();
+            const teamSelect = document.getElementById('teamName');
+            teamSelect.innerHTML = '<option value="">Select a team</option>';
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.teamName;
+                option.textContent = team.teamName;
+                teamSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading teams for dropdown:', error);
+            alert('Failed to load teams. Please refresh the page.');
+        }
+    }
+
+    // Edit functions
+    function editResult(id) {
+        Promise.all([
+            fetch(`/api/results/${id}`),
+            fetch('/api/drivers')
+        ])
+            .then(([resultResponse, driversResponse]) => {
+                if (!resultResponse.ok) {
+                    throw new Error('Failed to fetch result data');
+                }
+                return Promise.all([resultResponse.json(), driversResponse.json()]);
+            })
+            .then(([result, drivers]) => {
+                document.getElementById('result-id').value = id;
+
+                // Set round and circuit in the dropdown
+                const roundSelect = document.getElementById('result-round');
+                roundSelect.innerHTML = ''; // Clear existing options
+                const option = document.createElement('option');
+                option.value = result.round;
+                option.textContent = `Round ${result.round} - ${result.circuit}`;
+                option.selected = true;
+                option.disabled = true;
+                roundSelect.appendChild(option);
+
+                // Disable round selection when editing
+                roundSelect.disabled = true;
+
+                // Sort drivers by number
+                drivers.sort((a, b) => a.driverNumber - b.driverNumber);
+
+                // Populate pole position dropdown
+                const poleSelect = document.getElementById('race1-pole');
+                poleSelect.innerHTML = '<option value="">Select pole position</option>';
+                drivers.forEach(driver => {
+                    const option = document.createElement('option');
+                    option.value = driver.driverNumber;
+                    option.textContent = `#${driver.driverNumber} ${driver.firstName} ${driver.lastName}`;
+                    if (result.races?.[0]?.pole_position === driver.driverNumber.toString()) {
+                        option.selected = true;
+                    }
+                    poleSelect.appendChild(option);
+                });
+
+                // Create a map of driver numbers to names
+                const driverMap = {};
+                drivers.forEach(driver => {
+                    driverMap[driver.driverNumber] = `${driver.firstName} ${driver.lastName}`;
+                });
+
+                // Populate results for each race
+                const races = result.races || [];
+                for (let i = 0; i < 3; i++) {
+                    const race = races[i] || {};
+                    const results = race.results || [];
+                    const container = document.getElementById(`race${i + 1}-results`);
+                    container.innerHTML = '';
+
+                    // Create rows for all drivers
+                    drivers.forEach(driver => {
+                        const row = document.createElement('div');
+                        row.className = 'result-row';
+
+                        const driverInfo = document.createElement('div');
+                        driverInfo.className = 'driver-info';
+                        driverInfo.innerHTML = `
+                            <span class="driver-number">#${driver.driverNumber}</span>
+                            <span>${driver.firstName} ${driver.lastName}</span>
+                        `;
+
+                        const positionInput = document.createElement('input');
+                        positionInput.type = 'text';
+                        positionInput.required = true;
+                        positionInput.placeholder = 'Position';
+                        positionInput.dataset.driverNumber = driver.driverNumber;
+
+                        const fastestLapRadio = document.createElement('input');
+                        fastestLapRadio.type = 'radio';
+                        fastestLapRadio.name = `race${i + 1}-fastest-lap`;
+                        fastestLapRadio.value = driver.driverNumber;
+                        fastestLapRadio.dataset.driverNumber = driver.driverNumber;
+
+                        // Find the result for this driver
+                        const driverResult = results.find(r => r.driverNumber === driver.driverNumber);
+                        if (driverResult) {
+                            positionInput.value = driverResult.position;
+                            if (driverResult.fastest_lap) {
+                                fastestLapRadio.checked = true;
+                            }
+                        }
+
+                        row.appendChild(driverInfo);
+                        row.appendChild(positionInput);
+                        row.appendChild(fastestLapRadio);
+
+                        container.appendChild(row);
+                    });
+                }
+
+                document.getElementById('result-form').style.display = 'block';
+            })
+            .catch(error => {
+                alert('Failed to load result data. Please try again.');
+            });
+    }
+
+    function editRace(id) {
+        fetch(`/api/races/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(race => {
+                document.getElementById('race-id').value = id;
+                document.getElementById('race-round').value = race.round;
+                document.getElementById('circuit').value = race.circuit;
+                document.getElementById('city').value = race.city;
+                document.getElementById('country').value = race.country;
+
+                const races = race.races || [];
+                races.forEach((raceData, index) => {
+                    const dateInput = document.getElementById(`race${index + 1}-date`);
+                    const timeInput = document.getElementById(`race${index + 1}-time`);
+                    if (dateInput) dateInput.value = raceData.date || '';
+                    if (timeInput) timeInput.value = raceData.time || '';
+                });
+
+                document.getElementById('race-form').style.display = 'block';
+            })
+            .catch(error => {
+                alert('Failed to load race data. Please try again.');
+            });
+    }
+
+    function editTeam(id) {
+        fetch(`/api/teams/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch team data');
+                }
+                return response.json();
+            })
+            .then(team => {
+                document.getElementById('team-id').value = id;
+                document.getElementById('teamIdInput').value = team.teamId;
+                document.getElementById('teamNameInput').value = team.teamName;
+                document.getElementById('teamCountry').value = team.teamCountry;
+                document.getElementById('teamPoints').value = team.teamPoints || 0;
+
+                // Disable team ID input when editing
+                document.getElementById('teamIdInput').disabled = true;
+
+                document.getElementById('team-form').style.display = 'block';
+            })
+            .catch(error => {
+                alert('Failed to load team data. Please try again.');
+            });
+    }
+
+    function editDriver(id) {
+        fetch(`/api/drivers/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch driver data');
+                }
+                return response.json();
+            })
+            .then(driver => {
+                document.getElementById('driver-id').value = id;
+                document.getElementById('driverNumber').value = driver.driverNumber;
+                document.getElementById('firstName').value = driver.firstName;
+                document.getElementById('lastName').value = driver.lastName;
+                document.getElementById('nationality').value = driver.nationality;
+                document.getElementById('points').value = driver.points || 0;
+                document.getElementById('status').value = driver.status || 'None';
+                document.getElementById('teamName').value = driver.teamName;
+                document.getElementById('driver-form').style.display = 'block';
+            })
+            .catch(error => {
+                alert('Failed to load driver data. Please try again.');
+            });
+    }
+
+    function editItem(type, id) {
+        switch (type) {
+            case 'driver':
+                editDriver(id);
+                break;
+            case 'team':
+                editTeam(id);
+                break;
+            case 'race':
+                editRace(id);
+                break;
+            case 'result':
+                editResult(id);
+                break;
+            default:
+                alert('Unknown type: ' + type);
+        }
+    }
+
+    // Form submission handlers
+    document.getElementById('driver-form-content').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('driver-id').value;
+        const data = {
+            driverNumber: document.getElementById('driverNumber').value,
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            nationality: document.getElementById('nationality').value,
+            points: parseInt(document.getElementById('points').value) || 0,
+            status: document.getElementById('status').value,
+            teamName: document.getElementById('teamName').value
+        };
+        if (id) {
+            updateDriver(id, data);
+        } else {
+            createDriver(data);
+        }
+    });
+
+    document.getElementById('team-form-content').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('team-id').value;
+        const teamName = document.getElementById('teamNameInput').value.trim();
+
+        if (!teamName || teamName.trim() === '') {
+            alert('Team Name is required');
+            return;
+        }
+
+        const data = {
+            teamId: document.getElementById('teamIdInput').value.trim(),
+            teamName: teamName,
+            teamCountry: document.getElementById('teamCountry').value.trim(),
+            teamPoints: Number(document.getElementById('teamPoints').value) || 0
+        };
+
+        if (id) {
+            updateTeam(id, data);
+        } else {
+            createTeam(data);
+        }
+    });
+
+    document.getElementById('race-form-content').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('race-id').value;
+        const data = {
+            round: document.getElementById('race-round').value,
+            circuit: document.getElementById('circuit').value,
+            city: document.getElementById('city').value,
+            country: document.getElementById('country').value,
+            races: [
+                {
+                    date: document.getElementById('race1-date').value,
+                    time: document.getElementById('race1-time').value || null,
+                    race: 1
+                },
+                {
+                    date: document.getElementById('race2-date').value,
+                    time: document.getElementById('race2-time').value || null,
+                    race: 2
+                },
+                {
+                    date: document.getElementById('race3-date').value,
+                    time: document.getElementById('race3-time').value || null,
+                    race: 3
+                }
+            ]
+        };
+        if (id) {
+            updateRace(id, data);
+        } else {
+            createRace(data);
+        }
+    });
+
+    document.getElementById('result-form-content').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('result-id').value;
+        const roundSelect = document.getElementById('result-round');
+        const selectedOption = roundSelect.options[roundSelect.selectedIndex];
+
+        const data = {
+            round: document.getElementById('result-round').value,
+            circuit: selectedOption.dataset.circuit,
+            races: []
+        };
+
+        // Get race 1 data
+        const race1 = {
+            race_number: 1,
+            pole_position: document.getElementById('race1-pole').value || null,
+            results: Array.from(document.getElementById('race1-results').children).map(row => ({
+                driverNumber: parseInt(row.children[1].dataset.driverNumber),
+                position: row.children[1].value,
+                fastest_lap: row.children[2].checked
+            }))
+        };
+        data.races.push(race1);
+
+        // Get race 2 and 3 data
+        for (let i = 2; i <= 3; i++) {
+            const race = {
+                race_number: i,
+                results: Array.from(document.getElementById(`race${i}-results`).children).map(row => ({
+                    driverNumber: parseInt(row.children[1].dataset.driverNumber),
+                    position: row.children[1].value,
+                    fastest_lap: row.children[2].checked
+                }))
+            };
+            data.races.push(race);
+        }
+
+        if (id) {
+            updateResult(id, data);
+        } else {
+            createResult(data);
+        }
+    });
+
+    // Add this function to generate the next team ID
+    async function getNextTeamId() {
+        try {
+            const response = await fetch('/api/teams');
+            const teams = await response.json();
+            if (teams.length === 0) return '1';
+
+            // Get all team IDs and convert to numbers
+            const teamIds = teams.map(team => parseInt(team.teamId));
+            // Find the highest ID and add 1
+            const nextId = Math.max(...teamIds) + 1;
+            return nextId.toString();
+        } catch (error) {
+            return '1'; // Fallback to 1 if there's an error
+        }
+    }
+
+    async function loadAvailableRounds() {
+        try {
+            const [racesResponse, resultsResponse] = await Promise.all([
+                fetch('/api/races'),
+                fetch('/api/results')
+            ]);
+
+            if (!racesResponse.ok || !resultsResponse.ok) {
+                throw new Error('Failed to fetch data');
+            }
+
+            const races = await racesResponse.json();
+            const results = await resultsResponse.json();
+
+            // Get rounds that have results
+            const roundsWithResults = new Set(results.map(r => parseInt(r.round)));
+
+            // Get available rounds (races without results)
+            const availableRounds = races
+                .filter(race => !roundsWithResults.has(parseInt(race.round)))
+                .sort((a, b) => parseInt(a.round) - parseInt(b.round));
+
+            // Populate the dropdown
+            const roundSelect = document.getElementById('result-round');
+            roundSelect.innerHTML = '<option value="">Select a round</option>';
+
+            if (availableRounds.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No rounds available';
+                roundSelect.appendChild(option);
+                return;
+            }
+
+            availableRounds.forEach(race => {
+                const option = document.createElement('option');
+                option.value = race.round;
+                option.textContent = `Round ${race.round} - ${race.circuit}`;
+                option.dataset.circuit = race.circuit;
+                roundSelect.appendChild(option);
+            });
+        } catch (error) {
+            alert('Failed to load available rounds. Please try again.');
+        }
+    }
+
+    function updateCircuit() {
+        const roundSelect = document.getElementById('result-round');
+        const circuitInput = document.getElementById('circuit');
+        const selectedOption = roundSelect.options[roundSelect.selectedIndex];
+
+        if (selectedOption && selectedOption.value) {
+            circuitInput.value = selectedOption.dataset.circuit || '';
+        } else {
+            circuitInput.value = '';
+        }
+    }
+
+    // Add function to load drivers
+    async function loadDriversForDropdown() {
+        try {
+            const response = await fetch('/api/drivers');
+            const drivers = await response.json();
+            return drivers;
+        } catch (error) {
+            console.error('Error loading drivers:', error);
+            return [];
+        }
+    }
+
+    // Add function to populate results for a race
+    async function populateRaceResults(raceId) {
+        const container = document.getElementById(`${raceId}-results`);
+        const drivers = await loadDriversForDropdown();
+
+        // Sort drivers by number
+        drivers.sort((a, b) => a.driverNumber - b.driverNumber);
+
+        container.innerHTML = '';
+
+        drivers.forEach(driver => {
+            const row = document.createElement('div');
+            row.className = 'result-row';
+
+            const driverInfo = document.createElement('div');
+            driverInfo.className = 'driver-info';
+            driverInfo.innerHTML = `
+                <span class="driver-number">#${driver.driverNumber}</span>
+                <span>${driver.firstName} ${driver.lastName}</span>
+            `;
+
+            const positionInput = document.createElement('input');
+            positionInput.type = 'text';
+            positionInput.required = true;
+            positionInput.placeholder = 'Position';
+            positionInput.dataset.driverNumber = driver.driverNumber;
+
+            const fastestLapRadio = document.createElement('input');
+            fastestLapRadio.type = 'radio';
+            fastestLapRadio.name = `${raceId}-fastest-lap`;
+            fastestLapRadio.value = driver.driverNumber;
+            fastestLapRadio.dataset.driverNumber = driver.driverNumber;
+
+            row.appendChild(driverInfo);
+            row.appendChild(positionInput);
+            row.appendChild(fastestLapRadio);
+
+            container.appendChild(row);
+        });
+    }
+
+    function updatePoints() {
+        fetch('/api/results/update-points', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error updating points: ' + data.error);
+                } else {
+                    alert('Points updated successfully!');
+                    // Update the tables with the new data
+                    if (data.drivers) {
+                        createTable('drivers', data.drivers);
+                    }
+                    if (data.teams) {
+                        createTable('teams', data.teams);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating points');
+            });
+    }
+</script>
+{% endblock %}

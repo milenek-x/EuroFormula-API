@@ -1,0 +1,235 @@
+/* Additional styles for the application */
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    color: white;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+    background-color: #10b981;
+}
+
+.notification.error {
+    background-color: #ef4444;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Form styles */
+.add-form {
+    background-color: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.add-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.add-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.add-form input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+}
+
+.add-form button {
+    margin-top: 1rem;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background-color: #f1f5f9;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8fafc;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actions button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Hero section */
+.hero {
+    text-align: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+/* Endpoints grid */
+.endpoints {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.endpoint {
+    background-color: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.endpoint h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.endpoint p {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Login container */
+.login-container {
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.login-container form {
+    margin-top: 1.5rem;
+}
+
+.login-container button {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Admin dashboard */
+.admin-dashboard {
+    padding: 2rem 0;
+}
+
+.admin-dashboard h1 {
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Data management */
+.data-management {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.data-management .form-group {
+    flex: 1;
+}
+
+.data-management .actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .endpoints {
+        grid-template-columns: 1fr;
+    }
+
+    .data-management {
+        flex-direction: column;
+    }
+
+    .data-management .actions {
+        width: 100%;
+    }
+
+    .data-management button {
+        width: 100%;
+    }
+}
