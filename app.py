@@ -6,28 +6,55 @@ import io
 import os
 from datetime import datetime
 import json
+import logging
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='static')
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here')  # Use environment variable in production
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here')
+
+logger.info("Starting application initialization...")
+logger.debug(f"Static folder path: {app.static_folder}")
+logger.debug(f"Template folder path: {app.template_folder}")
 
 # Initialize Firebase Admin
-cred = credentials.Certificate({
-    "type": os.environ.get('FIREBASE_TYPE'),
-    "project_id": os.environ.get('FIREBASE_PROJECT_ID'),
-    "private_key_id": os.environ.get('FIREBASE_PRIVATE_KEY_ID'),
-    "private_key": os.environ.get('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
-    "client_email": os.environ.get('FIREBASE_CLIENT_EMAIL'),
-    "client_id": os.environ.get('FIREBASE_CLIENT_ID'),
-    "auth_uri": os.environ.get('FIREBASE_AUTH_URI'),
-    "token_uri": os.environ.get('FIREBASE_TOKEN_URI'),
-    "auth_provider_x509_cert_url": os.environ.get('FIREBASE_AUTH_PROVIDER_CERT_URL'),
-    "client_x509_cert_url": os.environ.get('FIREBASE_CLIENT_CERT_URL')
-})
+try:
+    logger.info("Initializing Firebase Admin...")
+    cred = credentials.Certificate({
+        "type": os.environ.get('FIREBASE_TYPE'),
+        "project_id": os.environ.get('FIREBASE_PROJECT_ID'),
+        "private_key_id": os.environ.get('FIREBASE_PRIVATE_KEY_ID'),
+        "private_key": os.environ.get('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+        "client_email": os.environ.get('FIREBASE_CLIENT_EMAIL'),
+        "client_id": os.environ.get('FIREBASE_CLIENT_ID'),
+        "auth_uri": os.environ.get('FIREBASE_AUTH_URI'),
+        "token_uri": os.environ.get('FIREBASE_TOKEN_URI'),
+        "auth_provider_x509_cert_url": os.environ.get('FIREBASE_AUTH_PROVIDER_CERT_URL'),
+        "client_x509_cert_url": os.environ.get('FIREBASE_CLIENT_CERT_URL')
+    })
+    logger.debug("Firebase credentials loaded successfully")
 
-# Initialize Firebase only if it hasn't been initialized
-if not firebase_admin._apps:
-    initialize_app(cred)
-db = firestore.client()
+    # Initialize Firebase only if it hasn't been initialized
+    if not firebase_admin._apps:
+        initialize_app(cred)
+        logger.info("Firebase Admin initialized successfully")
+    else:
+        logger.info("Firebase Admin already initialized")
+    
+    db = firestore.client()
+    logger.info("Firestore client initialized successfully")
+except Exception as e:
+    logger.error(f"Error initializing Firebase: {str(e)}")
+    raise
 
 # Collections
 DRIVERS = 'drivers'
@@ -61,39 +88,56 @@ TEAM_POINTS = {
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    logger.info("Accessing index route")
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        logger.error(f"Error rendering index template: {str(e)}")
+        return str(e), 500
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logger.info(f"Accessing login route with method: {request.method}")
     if request.method == 'POST':
         password = request.form.get('password')
         if password == 'Euro4mula1':
             session['logged_in'] = True
+            logger.info("Login successful")
             return redirect(url_for('admin'))
+        logger.warning("Invalid login attempt")
         return render_template('login.html', error='Invalid password')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
+    logger.info("User logging out")
     session.pop('logged_in', None)
     return redirect(url_for('index'))
 
 @app.route('/admin')
 def admin():
+    logger.info("Accessing admin route")
     if not session.get('logged_in'):
+        logger.warning("Unauthorized access attempt to admin route")
         return redirect(url_for('login'))
     return render_template('admin.html')
 
 # API endpoints for data retrieval
 @app.route('/api/drivers')
 def get_drivers():
-    drivers = []
-    docs = db.collection(DRIVERS).stream()
-    for doc in docs:
-        drivers.append(doc.to_dict())
-    # Sort drivers by points in descending order
-    drivers.sort(key=lambda x: x.get('points', 0), reverse=True)
-    return jsonify(drivers)
+    logger.info("Fetching drivers data")
+    try:
+        drivers = []
+        docs = db.collection(DRIVERS).stream()
+        for doc in docs:
+            drivers.append(doc.to_dict())
+        # Sort drivers by points in descending order
+        drivers.sort(key=lambda x: x.get('points', 0), reverse=True)
+        logger.debug(f"Retrieved {len(drivers)} drivers")
+        return jsonify(drivers)
+    except Exception as e:
+        logger.error(f"Error fetching drivers: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/teams')
 def get_teams():
@@ -501,7 +545,9 @@ def update_points():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    logger.info("Starting Flask application in debug mode")
     app.run(debug=True)
 else:
     # This is for Vercel
+    logger.info("Application running in Vercel environment")
     app = app 
