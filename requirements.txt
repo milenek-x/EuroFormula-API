@@ -10,9 +10,4 @@ Jinja2==3.0.1
 MarkupSafe==2.0.1
 numpy==1.21.0
 setuptools>=51.0.0
-wheel>=0.36.0
---only-binary :all:
---platform manylinux2014_x86_64
---implementation cp
---python-version 39
---target-version cp39 
+wheel>=0.36.0 
