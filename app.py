@@ -1,16 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, initialize_app
 import pandas as pd
 import io
 import os
+from datetime import datetime
+import json
 
 app = Flask(__name__, static_folder='static')
-app.secret_key = 'your-secret-key-here'  # Change this to a secure secret key
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here')  # Use environment variable in production
 
-# Initialize Firebase
-cred = credentials.Certificate('E:/CustomAPI/euroformula.json')
-firebase_admin.initialize_app(cred)
+# Initialize Firebase Admin
+cred = credentials.Certificate({
+    "type": os.environ.get('FIREBASE_TYPE'),
+    "project_id": os.environ.get('FIREBASE_PROJECT_ID'),
+    "private_key_id": os.environ.get('FIREBASE_PRIVATE_KEY_ID'),
+    "private_key": os.environ.get('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+    "client_email": os.environ.get('FIREBASE_CLIENT_EMAIL'),
+    "client_id": os.environ.get('FIREBASE_CLIENT_ID'),
+    "auth_uri": os.environ.get('FIREBASE_AUTH_URI'),
+    "token_uri": os.environ.get('FIREBASE_TOKEN_URI'),
+    "auth_provider_x509_cert_url": os.environ.get('FIREBASE_AUTH_PROVIDER_CERT_URL'),
+    "client_x509_cert_url": os.environ.get('FIREBASE_CLIENT_CERT_URL')
+})
+
+# Initialize Firebase only if it hasn't been initialized
+if not firebase_admin._apps:
+    initialize_app(cred)
 db = firestore.client()
 
 # Collections
